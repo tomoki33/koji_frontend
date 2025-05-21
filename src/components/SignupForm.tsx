@@ -13,7 +13,7 @@ type Props = {
 const SignupForm: React.FC<Props> = ({ email, password, onEmailChange, onPasswordChange, onSubmit, onSwitchToLogin, error }) => (
     <form onSubmit={onSubmit}>
         <h2>新規ユーザー作成</h2>
-        <input type="email" name="email" value={email} onChange={onEmailChange} placeholder="メールアドレス" required />
+        <input type="text" name="email" value={email} onChange={onEmailChange} placeholder="メールアドレス" required />
         <input type="password" name="password" value={password} onChange={onPasswordChange} placeholder="パスワード" required />
         <button type="submit">ユーザー作成</button>
         <button type="button" onClick={onSwitchToLogin}>ログイン画面に戻る</button>
