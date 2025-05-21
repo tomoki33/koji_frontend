@@ -1,0 +1,70 @@
+/* ベースレイアウト */
+.app-container {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* ヘッダー */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: #fff;
+  padding: 15px 20px;
+  position: relative;
+}
+
+/* タイトル */
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+/* ハンバーガーアイコン */
+.hamburger {
+  font-size: 26px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* メニュー */
+.menu {
+  background-color: #444;
+  padding: 10px 20px;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+/* メニューリスト */
+.menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* メニュー項目 */
+.menu li {
+  margin: 12px 0;
+}
+
+/* メニューリンク */
+.menu a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.menu a:hover {
+  color: #ffcc00;
+}
+
+/* メインコンテンツ */
+main {
+  padding: 20px;
+}

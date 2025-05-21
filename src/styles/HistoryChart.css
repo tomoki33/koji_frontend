@@ -1,0 +1,72 @@
+.history-chart-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 24px;
+    background: #f4f4f4;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.history-chart-container h2 {
+    margin-bottom: 24px;
+    color: #2c3e50;
+    font-size: 24px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 16px;
+    color: #2f2f2f;
+}
+
+.form-group select,
+.form-group input[type="date"] {
+    padding: 10px 14px;
+    font-size: 16px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: border-color 0.2s ease;
+}
+
+.form-group select:focus,
+.form-group input[type="date"]:focus {
+    border-color: #34495e;
+    outline: none;
+}
+
+/* 中央配置と落ち着いた色 */
+.button-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.view-button {
+    padding: 12px 24px;
+    background: #34495e; /* ネイビーブルー */
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.view-button:hover {
+    background: #2c3e50;
+}
+
+.chart-area {
+    margin-top: 30px;
+}
