@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../styles/KojiForm.css';
-import { createTemperatureLog, getTemperatureLogs } from '../services/api';
+import { createTemperatureLog, getLatestTemperatureLog } from '../services/api';
 
 interface FormData {
     cycleId: string;
@@ -20,30 +20,33 @@ const KojiForm: React.FC = () => {
         productTemperature: 0,
         comment: '',
     });
-    const [previousCycles, setPreviousCycles] = useState<string[]>([]);
-    const [isFirstEntry, setIsFirstEntry] = useState<boolean>(true);
     const [successMessage, setSuccessMessage] = useState<string>('');
+    const [latestLog, setLatestLog] = useState<any>(null);
+    const [isPastDateSelected, setIsPastDateSelected] = useState<boolean>(false);
 
-    useEffect(() => {
-        const fetchTemperatureLogs = async () => {
-            try {
-                await getTemperatureLogs(formData.cycleId);
-            } catch (error) {
-                console.error('Error fetching previous cycles', error);
-            }
-        };
-        fetchTemperatureLogs();
-    }, [formData.cycleId]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    const handleCycleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleCycleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedCycle = e.target.value;
         setFormData((prevData) => ({ ...prevData, cycleId: selectedCycle }));
-        setIsFirstEntry(selectedCycle === 'new');
+
+        if (selectedCycle === 'test') {
+            setIsPastDateSelected(true);
+            try {
+                const latestLogResponse = await getLatestTemperatureLog();
+                const latestCycleId = latestLogResponse.data.SK.split('#')[1];
+                setLatestLog(latestCycleId);
+                setFormData((prevData) => ({ ...prevData, cycleId: latestCycleId }));
+            } catch (error) {
+                console.error('Error fetching latest temperature log', error);
+            }
+        } else {
+            setIsPastDateSelected(false);
+            setLatestLog(null);
+        }
     };
 
     const roundTime = (time: string) => {
@@ -76,16 +79,16 @@ const KojiForm: React.FC = () => {
         <form onSubmit={handleSubmit}>
             <select name="cycleId" onChange={handleCycleChange} required>
                 <option value="new">新しい日付を入力</option>
-                <option value="test">2025/01/01~</option>
-                <option value="2">2025/05/09</option>
-                <option value="3">2025/05/10</option>
-                <option value="4">2025/05/11</option>
-                <option value="5">2025/05/12</option>
-                {previousCycles.map((cycle) => (
-                    <option key={cycle} value={cycle}>{cycle}</option>
-                ))}
+                <option value="test">最新日付から選択</option>
             </select>
-            {isFirstEntry && (
+
+            {isPastDateSelected && latestLog ? (
+                <input
+                    type="text"
+                    value={latestLog}
+                    readOnly
+                />
+            ) : (
                 <input
                     type="date"
                     name="cycleId"
@@ -96,6 +99,7 @@ const KojiForm: React.FC = () => {
                     required
                 />
             )}
+
             <input type="time" name="time" onChange={handleChange} placeholder="時間を入力" required />
             <input type="number" name="roomTemperature" onChange={handleChange} placeholder="室温(℃)" required />
             <input type="number" name="humidity" onChange={handleChange} placeholder="湿度(%)" required />

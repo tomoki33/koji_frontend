@@ -30,7 +30,7 @@ const Login: React.FC = () => {
             const token = await loginUser(email, password);            
             sessionStorage.setItem('accessToken', token.accessToken); // アクセストークンを保存
             sessionStorage.setItem('refreshToken', token.refreshToken);
-            navigate('/history'); // /historyに遷移
+            navigate('/chart'); // /historyに遷移
         } catch (err) {
             setError((err as Error).message || 'メールアドレスかパスワードが間違っています。');
         }

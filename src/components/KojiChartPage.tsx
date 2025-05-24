@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
-import { getTemperatureLogs } from '../services/api'; // APIからデータを取得する関数をインポート
+import { getTemperatureLogs,getLatestTemperatureLog } from '../services/api'; // APIからデータを取得する関数をインポート
 import '../styles/KojiChartPage.css';
 
 Chart.register(...registerables);
@@ -19,9 +19,9 @@ const KojiChartPage: React.FC = () => {
     useEffect(() => {
         const fetchTemperatureData = async () => {
             try {
-                const response = await getTemperatureLogs('test');
+                const latestResponse = await getLatestTemperatureLog();
+                const response = await getTemperatureLogs(latestResponse.data.SK.split('#')[1]);
                 const data = response.data; 
-                console.log(data, 'data');
     
                 const cycleId = data[0].SK.split('#')[1]; // '#'の前の文字を取得
                 setCycleId(cycleId);
@@ -31,7 +31,6 @@ const KojiChartPage: React.FC = () => {
                     roomTemperature: item.roomTemperature,
                 }));
     
-                console.log(formattedData, 'chartData');
                 setChartData(formattedData);
             } catch (error) {
                 console.error('Error fetching temperature data', error);

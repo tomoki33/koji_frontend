@@ -23,10 +23,12 @@ const HistoryChart: React.FC = () => {
         const date = e.target.value;
         setSelectedDate(date);
 
+        // 日付が変更されたときに chartData を空にする
+        setChartData([]); // ここで chartData を空にする
+
         if (date) {
             fetchTemperatureData(date); // 日付を渡してデータを取得
         } else {
-            setChartData([]);
             setErrorMessage(''); // 日付が空の場合はエラーメッセージをリセット
         }
     };
@@ -71,7 +73,7 @@ const HistoryChart: React.FC = () => {
 
     return (
         <div className="history-chart-container">
-            <h2>履歴からグラフを見る</h2>
+            <h2>過去履歴</h2>
 
             <div className="form-group">
                 <label htmlFor="date">日付を選択</label>
