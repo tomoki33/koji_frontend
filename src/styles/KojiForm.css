@@ -53,3 +53,12 @@ button[type="submit"]:disabled {
     background-color: #ccc; /* 非活性時のボタンの色 */
     color: #666; /* 非活性時の文字色 */
 }
+.success-message {
+    background-color: #d4edda; /* 成功メッセージの背景色 */
+    color: #155724; /* 成功メッセージの文字色 */
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #c3e6cb; /* 枠線の色 */
+    border-radius: 5px; /* 角を丸くする */
+    text-align: center; /* 中央揃え */
+}

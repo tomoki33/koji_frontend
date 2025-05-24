@@ -6,6 +6,7 @@ import './styles/App.css'; // CSSは下に記載
 import KojiChartPage from './components/KojiChartPage';
 import HistoryChart from './components/HistoryChart';
 import { useLocation } from 'react-router-dom'; // 追加
+import { handleLogout } from './services/auth';
 
 const App: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -41,7 +42,7 @@ const App: React.FC = () => {
                         {/* <li><Link to="/login" onClick={toggleMenu}>ログイン</Link></li> */}
                         <li><Link to="/input-form" onClick={toggleMenu}>データ入力フォーム</Link></li>
                         <li><Link to="/chart" onClick={toggleMenu}>最新チャート</Link></li>
-                    </ul>
+                        <li><Link to="#" onClick={handleLogout}>ログアウト</Link></li>                    </ul>
                 </nav>
             )}
 

@@ -7,8 +7,8 @@ import {
 } from 'amazon-cognito-identity-js';
 
 const poolData = {
-    UserPoolId: 'ap-northeast-1_R2FIhKujJ', // ユーザープールID
-    ClientId: '35olan5anhngns337q3aer6nmi', // アプリクライアントID
+    UserPoolId: 'ap-northeast-1_A8Sxb2Gzd', // ユーザープールID
+    ClientId: '3rgpb68dlf94mudskupag0b721', // アプリクライアントID
 };
 
 const userPool = new CognitoUserPool(poolData);
@@ -42,12 +42,12 @@ export const loginUser = (email: string, password: string): Promise<AuthTokens> 
 };
 
 // ユーザー作成（サインアップ）
-export const createUser = (name: string, email: string, password: string): Promise<void> => {
+export const createUser = ( email: string, password: string): Promise<void> => {
     return new Promise((resolve, reject) => {
         const attributeList = [
             new CognitoUserAttribute({ Name: 'email', Value: email }),
-            new CognitoUserAttribute({ Name: 'name', Value: name }),
         ];
+
 
         userPool.signUp(email, password, attributeList, [], (err: any, result: any) => {
             if (err) {
@@ -74,4 +74,15 @@ export const confirmUser = (email: string, code: string): Promise<void> => {
             resolve(); // 確認成功
         });
     });
+};
+
+export const handleLogout = async () => {
+    try {
+        sessionStorage.removeItem('accessToken'); // セッションストレージからトークンを削除
+        sessionStorage.removeItem('refreshToken'); // リフレッシュトークンも削除
+        // ログイン画面にリダイレクト
+        window.location.href = '/'; // または、React Routerを使用してリダイレクト
+    } catch (error) {
+        console.error('Error logging out', error);
+    }
 };

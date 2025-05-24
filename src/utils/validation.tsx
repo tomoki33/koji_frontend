@@ -9,3 +9,8 @@ export const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // メールアドレスの正規表現
     return emailRegex.test(email);
 };
+
+export const validateUsername = (username: string): boolean => {
+    const usernamePattern = /^[\p{L}\p{M}\p{S}\p{N}\p{P}]+$/u; // 正規表現パターン
+    return username.length > 0 && usernamePattern.test(username); // 長さとパターンをチェック
+};

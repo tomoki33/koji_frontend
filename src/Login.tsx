@@ -5,7 +5,7 @@ import LoginForm from './components/LoginForm';
 import ConfirmForm from './components/ConfirmForm';
 import SignupForm from './components/SignupForm';
 import { useNavigate } from 'react-router-dom'; // useNavigateをインポート
-import { validatePassword, validateEmail } from './utils/validation'; // バリデーション関数をインポート
+import { validatePassword, validateEmail,validateUsername } from './utils/validation'; // バリデーション関数をインポート
 import './styles/Login.css';
 
 const Login: React.FC = () => {
@@ -13,7 +13,6 @@ const Login: React.FC = () => {
     const [step, setStep] = useState<'login' | 'signup' | 'confirm'>('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [userData, setUserData] = useState({ name: '', email: '' }); // userDataを定義
     const [confirmationCode, setConfirmationCode] = useState('');
     const [error, setError] = useState('');
 
@@ -28,7 +27,9 @@ const Login: React.FC = () => {
             return;
         }
         try {
-            await loginUser(email, password);
+            const token = await loginUser(email, password);            
+            sessionStorage.setItem('accessToken', token.accessToken); // アクセストークンを保存
+            sessionStorage.setItem('refreshToken', token.refreshToken);
             navigate('/history'); // /historyに遷移
         } catch (err) {
             setError((err as Error).message || 'メールアドレスかパスワードが間違っています。');
@@ -38,19 +39,20 @@ const Login: React.FC = () => {
     const handleCreateUser = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!validateEmail(email)) {
-            setError('メールアドレス形式で入力してください。');
+            setError('無効なメールアドレスです。');
             return;
         }
+        
         if (!validatePassword(password)) {
             setError('パスワードは大文字と記号を含む必要があります。');
             return;
         }
         try {
-            await createUser(userData.name, userData.email, password);
-            setEmail(userData.email); // confirm に渡すため
+            await createUser(email, password);
+            setEmail(email); // confirm に渡すため
             setStep('confirm');
         } catch (err) {
-            setError((err as Error).message || 'ユーザー作成に失敗しました');
+            setError('ユーザー作成に失敗しました。もう一度やり直してください。');
         }
     };
 
@@ -58,21 +60,20 @@ const Login: React.FC = () => {
         e.preventDefault();
         try {
             await confirmUser(email, confirmationCode);
-            alert('確認成功！ログインしてください');
             setStep('login');
         } catch (err) {
-            setError((err as Error).message || '確認に失敗しました');
+            if ((err as Error).message.includes('invalid code')) {
+                setError('確認コードが無効です。再度確認してください。');
+            } else {
+                setError('確認に失敗しました');
+            }
         }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        if (step === 'signup') {
-            setUserData({ ...userData, [name]: value }); // userDataを更新
-        } else {
-            if (name === 'email') setEmail(value);
-            if (name === 'password') setPassword(value);
-        }
+        if (name === 'email') setEmail(value);
+        if (name === 'password') setPassword(value);
     };
 
     return (
