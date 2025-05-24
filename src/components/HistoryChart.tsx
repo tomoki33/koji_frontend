@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
-import { getTemperatureLogs } from '../services/api'; // APIからデータを取得する関数をインポート
+import { getTemperatureLogs } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 import '../styles/HistoryChart.css';
 
 Chart.register(...registerables);
@@ -15,47 +16,56 @@ interface ChartData {
 }
 
 const HistoryChart: React.FC = () => {
-    const [selectedDate, setSelectedDate] = useState('');
-    const [chartData, setChartData] = useState<ChartData[]>([]); // 初期値を空の配列に設定
-    const [errorMessage, setErrorMessage] = useState<string>(''); // エラーメッセージの状態を追加
+    const navigate = useNavigate();
+    const [selectedDate, setSelectedDate] = useState<string>('');
+    const [chartData, setChartData] = useState<ChartData[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const date = e.target.value;
         setSelectedDate(date);
-
-        // 日付が変更されたときに chartData を空にする
-        setChartData([]); // ここで chartData を空にする
-
+        setChartData([]); // Clear previous data
         if (date) {
-            fetchTemperatureData(date); // 日付を渡してデータを取得
+            fetchTemperatureData(date);
         } else {
-            setErrorMessage(''); // 日付が空の場合はエラーメッセージをリセット
+            setErrorMessage('');
         }
     };
 
     const fetchTemperatureData = async (date: string) => {
         try {
-            const response = await getTemperatureLogs(date); // APIからデータを取得
-            const data = response.data;
-            if (data.length === 0) {
-                setErrorMessage('該当の日付にはデータが登録されていません。'); // データがない場合のエラーメッセージ
-                setChartData([]); // データをクリア
-            } else {
-                const formattedData: ChartData[] = data.map((item: any) => ({
-                    time: item.time,
-                    roomTemperature: item.roomTemperature,
-                    humidity: item.humidity,
-                    productTemperature: item.productTemperature,
-                    comment: item.comment,
-                }));
-
-                setChartData(formattedData);
-                setErrorMessage(''); // エラーメッセージをリセット
-            }
-        } catch (error) {
-            console.error('Error fetching temperature data', error);
-            setErrorMessage('該当の日付にはデータが登録されていません。'); // エラーが発生した場合のメッセージ
+            const response = await getTemperatureLogs(date);
+            handleFetchResponse(response.data);
+        } catch (error: any) {
+            handleFetchError(error);
         }
+    };
+
+    const handleFetchResponse = (data: any) => {
+        if (data.length === 0) {
+            setErrorMessage('該当の日付にはデータが登録されていません。');
+            setChartData([]);
+        } else {
+            const formattedData: ChartData[] = data.map((item: any) => ({
+                time: item.time,
+                roomTemperature: item.roomTemperature,
+                humidity: item.humidity,
+                productTemperature: item.productTemperature,
+                comment: item.comment,
+            }));
+            setChartData(formattedData);
+            setErrorMessage('');
+        }
+    };
+
+    const handleFetchError = (error: any) => {
+        if (error.response && error.response.status === 401) {
+            sessionStorage.removeItem('accessToken');
+            sessionStorage.removeItem('refreshToken');
+            navigate('/');
+        }
+        console.error('Error fetching temperature data', error);
+        setErrorMessage('該当の日付にはデータが登録されていません。');
     };
 
     const lineData = {
@@ -74,7 +84,6 @@ const HistoryChart: React.FC = () => {
     return (
         <div className="history-chart-container">
             <h2>過去履歴</h2>
-
             <div className="form-group">
                 <label htmlFor="date">日付を選択</label>
                 <input
@@ -84,15 +93,7 @@ const HistoryChart: React.FC = () => {
                     onChange={handleDateChange}
                 />
             </div>
-
-            {/* エラーメッセージの表示 */}
-            {errorMessage && (
-                <div className="error-message">
-                    {errorMessage}
-                </div>
-            )}
-
-            {/* データを表形式で表示 */}
+            {errorMessage && <div className="error-message">{errorMessage}</div>}
             <table className="data-table">
                 <thead>
                     <tr>
@@ -115,8 +116,6 @@ const HistoryChart: React.FC = () => {
                     ))}
                 </tbody>
             </table>
-
-            {/* チャートを表示 */}
             {chartData.length > 0 && (
                 <div className="chart-area">
                     <Line data={lineData} />

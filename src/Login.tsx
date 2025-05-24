@@ -5,7 +5,7 @@ import LoginForm from './components/LoginForm';
 import ConfirmForm from './components/ConfirmForm';
 import SignupForm from './components/SignupForm';
 import { useNavigate } from 'react-router-dom'; // useNavigateをインポート
-import { validatePassword, validateEmail,validateUsername } from './utils/validation'; // バリデーション関数をインポート
+import { validatePassword, validateEmail} from './utils/validation'; // バリデーション関数をインポート
 import './styles/Login.css';
 
 const Login: React.FC = () => {

@@ -17,14 +17,6 @@ const App: React.FC = () => {
         setMenuOpen(!menuOpen);
     };
 
-    // Sample data for the chart
-    const chartData = [
-        { time: '2023-01-01', roomTemperature: 20 },
-        { time: '2023-01-02', roomTemperature: 22 },
-        { time: '2023-01-03', roomTemperature: 21 },
-        // Add more data points as needed
-    ];
-
     return (
         <div className="app-container">
             {!isLoginPage && (

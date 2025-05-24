@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/KojiForm.css';
 import { createTemperatureLog, getLatestTemperatureLog } from '../services/api';
 
@@ -12,6 +13,7 @@ interface FormData {
 }
 
 const KojiForm: React.FC = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState<FormData>({
         cycleId: '',
         time: '',
@@ -21,7 +23,7 @@ const KojiForm: React.FC = () => {
         comment: '',
     });
     const [successMessage, setSuccessMessage] = useState<string>('');
-    const [latestLog, setLatestLog] = useState<any>(null);
+    const [latestLog, setLatestLog] = useState<string | null>(null);
     const [isPastDateSelected, setIsPastDateSelected] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -34,19 +36,27 @@ const KojiForm: React.FC = () => {
         setFormData((prevData) => ({ ...prevData, cycleId: selectedCycle }));
 
         if (selectedCycle === 'test') {
-            setIsPastDateSelected(true);
-            try {
-                const latestLogResponse = await getLatestTemperatureLog();
-                const latestCycleId = latestLogResponse.data.SK.split('#')[1];
-                setLatestLog(latestCycleId);
-                setFormData((prevData) => ({ ...prevData, cycleId: latestCycleId }));
-            } catch (error) {
-                console.error('Error fetching latest temperature log', error);
-            }
+            await fetchLatestLog();
         } else {
-            setIsPastDateSelected(false);
-            setLatestLog(null);
+            resetLogSelection();
         }
+    };
+
+    const fetchLatestLog = async () => {
+        setIsPastDateSelected(true);
+        try {
+            const latestLogResponse = await getLatestTemperatureLog();
+            const latestCycleId = latestLogResponse.data.SK.split('#')[1];
+            setLatestLog(latestCycleId);
+            setFormData((prevData) => ({ ...prevData, cycleId: latestCycleId }));
+        } catch (error) {
+            console.error('Error fetching latest temperature log', error);
+        }
+    };
+
+    const resetLogSelection = () => {
+        setIsPastDateSelected(false);
+        setLatestLog(null);
     };
 
     const roundTime = (time: string) => {
@@ -62,9 +72,18 @@ const KojiForm: React.FC = () => {
             await createTemperatureLog(formData.cycleId, { ...formData, time: finalTime });
             setSuccessMessage('温度ログが正常に送信されました！');
             setTimeout(() => setSuccessMessage(''), 3000);
-        } catch (error) {
-            console.error('Error submitting form', error);
+        } catch (error: any) {
+            handleApiError(error);
         }
+    };
+
+    const handleApiError = (error: any) => {
+        if (error.response && error.response.status === 401) {
+            sessionStorage.removeItem('accessToken');
+            sessionStorage.removeItem('refreshToken');
+            navigate('/');
+        }
+        console.error('Error submitting form', error);
     };
 
     const isSubmitDisabled = !(
@@ -83,11 +102,7 @@ const KojiForm: React.FC = () => {
             </select>
 
             {isPastDateSelected && latestLog ? (
-                <input
-                    type="text"
-                    value={latestLog}
-                    readOnly
-                />
+                <input type="text" value={latestLog} readOnly />
             ) : (
                 <input
                     type="date"
@@ -101,9 +116,30 @@ const KojiForm: React.FC = () => {
             )}
 
             <input type="time" name="time" onChange={handleChange} placeholder="時間を入力" required />
-            <input type="number" name="roomTemperature" onChange={handleChange} placeholder="室温(℃)" required />
-            <input type="number" name="humidity" onChange={handleChange} placeholder="湿度(%)" required />
-            <input type="number" name="productTemperature" onChange={handleChange} placeholder="品温(℃)" required />
+            <input
+                type="number"
+                name="roomTemperature"
+                onChange={handleChange}
+                placeholder="室温(℃)"
+                step="0.1"
+                required
+            />
+            <input
+                type="number"
+                name="humidity"
+                onChange={handleChange}
+                placeholder="湿度(%)"
+                step="0.1"
+                required
+            />
+            <input
+                type="number"
+                name="productTemperature"
+                onChange={handleChange}
+                placeholder="品温(℃)"
+                step="0.1"
+                required
+            />
             <textarea name="comment" onChange={handleChange} placeholder="コメント"></textarea>
             <button type="submit" disabled={isSubmitDisabled}>送信</button>
             {successMessage && <div className="success-message">{successMessage}</div>}
