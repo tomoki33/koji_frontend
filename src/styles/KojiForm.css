@@ -9,6 +9,7 @@ form {
     flex-direction: column;
     gap: 20px;
     font-family: 'Arial', sans-serif;
+    /* overflow: hidden; */
 }
 
 input[type="text"],
@@ -21,6 +22,22 @@ textarea {
     font-size: 16px;
     width: 100%;
     box-sizing: border-box;
+    appearance: none;
+}
+
+
+select {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    appearance: auto;
+    background-color: #ffffff;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
 }
 
 input:focus,
@@ -49,16 +66,43 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background-color: #4a5a70;
 }
+
 button[type="submit"]:disabled {
-    background-color: #ccc; /* 非活性時のボタンの色 */
-    color: #666; /* 非活性時の文字色 */
+    background-color: #ccc;
+    /* 非活性時のボタンの色 */
+    color: #666;
+    /* 非活性時の文字色 */
 }
+
 .success-message {
-    background-color: #d4edda; /* 成功メッセージの背景色 */
-    color: #155724; /* 成功メッセージの文字色 */
+    background-color: #d4edda;
+    /* 成功メッセージの背景色 */
+    color: #155724;
+    /* 成功メッセージの文字色 */
     padding: 10px;
     margin-top: 10px;
-    border: 1px solid #c3e6cb; /* 枠線の色 */
-    border-radius: 5px; /* 角を丸くする */
-    text-align: center; /* 中央揃え */
+    border: 1px solid #c3e6cb;
+    /* 枠線の色 */
+    border-radius: 5px;
+    /* 角を丸くする */
+    text-align: center;
+    /* 中央揃え */
+}
+
+/* スマホサイズ用のスタイル */
+@media (max-width: 600px) {
+    form {
+        padding: 20px;
+        /* スマホ用のパディング調整 */
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 14px;
+        /* スマホ用のフォントサイズ調整 */
+        padding: 10px;
+        /* パディングを調整 */
+    }
 }

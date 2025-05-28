@@ -31,3 +31,13 @@ export const getTemperatureLogs = async (cycleId: string) => {
 export const getLatestTemperatureLog = async () => {
     return await apiClient.get(`/cycles/latest-log`);
 };
+
+// update_temperature_log関数を追加
+export const updateTemperatureLog = async (cycleId: string, logData: any) => {
+    return await apiClient.post(`/cycles/update/${cycleId}`, logData);
+};
+
+// 特定のサイクルログを取得するAPI
+export const getCycleLog = async (cycleId: string, date: string, time: string) => {
+    return await apiClient.get(`/cycles/${cycleId}/${date}/${time}`);
+};

@@ -1,0 +1,61 @@
+/* Modal.css */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    max-height: 80vh;
+    /* Limit height */
+    overflow-y: auto;
+    /* Enable scrolling */
+    width: 90%;
+    /* Responsive width */
+    max-width: 600px;
+    /* Optional: max width */
+    padding: 20px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    background-color: #5b6b83;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4a5a70;
+}
+
+.close-button {
+    background-color: #4A4A4A;
+    /* ダークグレー */
+    color: white;
+    /* 白い文字 */
+    border: none;
+    /* ボーダーなし */
+    padding: 10px 15px;
+    /* パディング */
+    border-radius: 5px;
+    /* 角を丸く */
+    cursor: pointer;
+    /* ホバー時にポインターカーソル */
+}
+
+.close-button:hover {
+    background-color: #3A3A3A;
+    /* ホバー時の色を少し暗く */
+}
